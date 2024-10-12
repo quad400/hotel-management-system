@@ -21,7 +21,6 @@ public enum Role {
             ADMIN_WRITE,
             ADMIN_DELETE,
             ADMIN_UPDATE,
-
             STAFF_DELETE,
             STAFF_UPDATE,
             STAFF_WRITE,

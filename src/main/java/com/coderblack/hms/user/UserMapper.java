@@ -14,5 +14,6 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     UserResponse toUserResponse(User user);
+
     void toUser(UserRequest request, @MappingTarget User user);
 }

@@ -15,6 +15,9 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String email;
+    private String avatar;
+    private String phoneNumber;
+    private Role role;
     private boolean isAccountActivate;
     private boolean accountLocked;
     private LocalDateTime createdAt;

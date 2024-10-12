@@ -17,6 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+
+import static com.coderblack.hms.handler.BusinessErrorCodes.UNAUTHORIZED_USER;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
@@ -41,9 +44,14 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
+        String requestPath = request.getServletPath();
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            if (requestPath.startsWith("/auth")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            handleJwtErrorResponse(request, response);
             return;
         }
 
@@ -72,5 +80,16 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+
+    private void handleJwtErrorResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+
+        String jsonResponse = String.format(
+                "{ \"success\": false, \"businessErrorCode\": %d, \"businessErrorDescription\": \"%s\", \"error\": \"%s\" }",
+                UNAUTHORIZED_USER.getBusinessErrorCode(), UNAUTHORIZED_USER.getBusinessErrorDescription(), "JWT token is missing or malformed"
+        );
+        response.getWriter().write(jsonResponse);
     }
 }

@@ -4,7 +4,7 @@ import com.coderblack.hms.auth.request.*;
 import com.coderblack.hms.common.response.DefaultResponse;
 import com.coderblack.hms.exception.AccountBlockedException;
 import com.coderblack.hms.exception.AccountTokenExpireException;
-import com.coderblack.hms.exception.UserConflictException;
+import com.coderblack.hms.exception.ConflictException;
 import com.coderblack.hms.security.JwtService;
 import com.coderblack.hms.user.Role;
 import com.coderblack.hms.user.User;
@@ -33,7 +33,7 @@ public class AuthService {
     public DefaultResponse registerUser(RegisterRequest request) throws AccountNotFoundException {
         var findUser = userRepository.findByEmail(request.email()).isPresent();
         if (findUser) {
-            throw new UserConflictException(String.format("User with this %s already exists in the database", request.email()));
+            throw new ConflictException(String.format("User with this %s already exists in the database", request.email()));
         }
 
         User user = User.builder()

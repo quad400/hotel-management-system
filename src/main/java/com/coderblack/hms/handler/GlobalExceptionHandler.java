@@ -5,8 +5,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.ServletException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -70,8 +70,8 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(UserConflictException.class)
-    public ResponseEntity<ExceptionResponse> handleException(UserConflictException exp){
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionResponse> handleException(ConflictException exp){
         return ResponseEntity.status(CONFLICT).body(
                 ExceptionResponse
                         .builder()
@@ -94,8 +94,20 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AccessDeniedException exp){
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ExceptionResponse> handleException(UnauthorizedException exp){
+        return ResponseEntity.status(UNAUTHORIZED).body(
+                ExceptionResponse
+                        .builder()
+                        .businessErrorCode(UNAUTHORIZED_USER.getBusinessErrorCode())
+                        .businessErrorDescription(UNAUTHORIZED_USER.getBusinessErrorDescription())
+                        .error(exp.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ExceptionResponse> handleException(AuthorizationDeniedException exp){
         return ResponseEntity.status(UNAUTHORIZED).body(
                 ExceptionResponse
                         .builder()
@@ -142,6 +154,30 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ExceptionResponse> handleException(IllegalArgumentException exp){
+        return ResponseEntity.status(BAD_REQUEST).body(
+                ExceptionResponse
+                        .builder()
+                        .businessErrorCode(BAD_REQUEST_DATA.getBusinessErrorCode())
+                        .businessErrorDescription(BAD_REQUEST_DATA.getBusinessErrorDescription())
+                        .error(exp.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<ExceptionResponse> handleException(NumberFormatException exp){
+        return ResponseEntity.status(BAD_REQUEST).body(
+                ExceptionResponse
+                        .builder()
+                        .businessErrorCode(BAD_REQUEST_DATA.getBusinessErrorCode())
+                        .businessErrorDescription(BAD_REQUEST_DATA.getBusinessErrorDescription())
+                        .error(exp.getMessage())
+                        .build()
+        );
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleException(NotFoundException exp){
         return ResponseEntity.status(NOT_FOUND).body(
@@ -178,6 +214,8 @@ public class GlobalExceptionHandler {
                 .body(
                         ExceptionResponse
                                 .builder()
+                                .businessErrorCode(UNPROCESSABLE.getBusinessErrorCode())
+                                .businessErrorDescription(UNPROCESSABLE.getBusinessErrorDescription())
                                 .validationErrors(errors)
                                 .build()
                 );

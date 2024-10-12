@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 
 
@@ -28,7 +29,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<BaseResponse<UserResponse>> getUser(
             Authentication currentUser
-    ) throws AccountNotFoundException {
+    ) throws AccountNotFoundException, AccountLockedException {
         var userId = ((User) currentUser.getPrincipal()).getId();
 
         return ResponseEntity.ok(userService.getUser(userId));
@@ -37,7 +38,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<BaseResponse<UserResponse>> getUserById(
             @PathVariable("userId") String userId
-    ) throws AccountNotFoundException {
+    ) throws AccountNotFoundException, AccountLockedException {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
@@ -45,7 +46,7 @@ public class UserController {
     public ResponseEntity<DefaultResponse> updateUser(
             @RequestBody @Valid UserRequest request,
             Authentication currentUser
-    ) throws AccountNotFoundException {
+    ) throws AccountNotFoundException, AccountLockedException {
         return ResponseEntity.ok(userService.updateUser(request, currentUser));
     }
 
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/block-unblock-user/{userId}")
+    @PutMapping("/block-unblock-user/{userId}")
     public ResponseEntity<DefaultResponse> blockUser(
             @PathVariable("userId") String userId
     ) throws AccountNotFoundException {
@@ -70,7 +71,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update-user-permission/{userId}")
+    @PutMapping("/update-user-permission/{userId}")
     public ResponseEntity<DefaultResponse> updateUserPermissions(
             @PathVariable("userId") String userId,
             @RequestBody @Valid UserPermissionRequest request

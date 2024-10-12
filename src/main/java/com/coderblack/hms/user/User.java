@@ -2,6 +2,7 @@ package com.coderblack.hms.user;
 
 
 import com.coderblack.hms.staff.Staff;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,7 +39,8 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Staff staff;
     private boolean isAccountActivate;
     private boolean accountLocked=false;
@@ -70,8 +72,4 @@ public class User implements UserDetails {
         return User.builder().build();
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return !accountLocked;
-    }
 }
