@@ -1,6 +1,7 @@
 package com.coderblack.hms.user;
 
 
+import com.coderblack.hms.room.entity.Reservation;
 import com.coderblack.hms.staff.Staff;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -46,6 +47,10 @@ public class User implements UserDetails {
     private boolean accountLocked=false;
     @Column(nullable = true)
     private String token;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Reservation> reservations;
 
     @Column(nullable = true)
     private LocalDateTime tokenExpireDate;
