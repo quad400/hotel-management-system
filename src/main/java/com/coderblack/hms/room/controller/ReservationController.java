@@ -44,6 +44,24 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.OK).body(reservationService.updateReservation(reservationId, request, connectedUser));
     }
 
+    @PreAuthorize("hasRole('STAFF')")
+    @PatchMapping("/check-in/{reservationId}")
+    public ResponseEntity<DefaultResponse> checkInReservation(
+            @PathVariable("reservationId") String reservationId,
+            Authentication connectedUser
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(reservationService.checkInReservation(reservationId, connectedUser));
+    }
+
+    @PreAuthorize("hasRole('STAFF')")
+    @PatchMapping("/check-out/{reservationId}")
+    public ResponseEntity<DefaultResponse> checkOutReservation(
+            @PathVariable("reservationId") String reservationId,
+            Authentication connectedUser
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(reservationService.checkOutReservation(reservationId, connectedUser));
+    }
+
     @GetMapping("/get-reservation/{reservationId}")
     public ResponseEntity<BaseResponse<ReservationResponse>> getReservation(
             @PathVariable("reservationId") String reservationId

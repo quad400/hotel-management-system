@@ -9,7 +9,7 @@ import com.coderblack.hms.common.utils.GenericSearch;
 import com.coderblack.hms.common.utils.SortDirection;
 import com.coderblack.hms.exception.ConflictException;
 import com.coderblack.hms.exception.NotFoundException;
-import com.coderblack.hms.hotelservice.entity.GuestHotelService;
+import com.coderblack.hms.hotelservice.entity.OrderService;
 import com.coderblack.hms.hotelservice.entity.HotelService;
 import com.coderblack.hms.hotelservice.repository.GuestHotelServiceRepository;
 import com.coderblack.hms.hotelservice.request.AddServiceRequest;
@@ -96,10 +96,16 @@ public class HotelService_Service {
 
     public DefaultResponse orderService(@Valid OrderServiceRequest request, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
-        this.hotelServiceRepository.findById(request.hotelService()).orElseThrow(() -> new NotFoundException(String.format("Hotel Service with this ID::%s not found", request.hotelService())));
-        GuestHotelService guestService = mapper.toOrderService(request, user);
-        guestService.setStatus(GuestHotelServiceStatus.PENDING);
-        GuestHotelService guestHotelService = this.guestHotelServiceRepository.save(guestService);
+        HotelService hotelService = this.hotelServiceRepository.findById(request.hotelService()).orElseThrow(() -> new NotFoundException(String.format("Hotel Service with this ID::%s not found", request.hotelService())));
+        OrderService guestService = OrderService.builder()
+                .price(request.price())
+                .details(request.details())
+                .status(GuestHotelServiceStatus.PENDING)
+                .hotelService(hotelService)
+                .user(user)
+                .build();
+
+        OrderService guestHotelService = this.guestHotelServiceRepository.save(guestService);
         return new DefaultResponse(
                 "Successfully ordered service",
                 guestHotelService.getId()
@@ -109,7 +115,7 @@ public class HotelService_Service {
 
     public DefaultResponse confirmOrderService(String orderServiceId, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
-        GuestHotelService guestHotelService = this.guestHotelServiceRepository.findByIdAndUser(orderServiceId, user).orElseThrow(() -> new NotFoundException(String.format("Guest Hotel Service with this ID::%s not found", orderServiceId)));
+        OrderService guestHotelService = this.guestHotelServiceRepository.findByIdAndUser(orderServiceId, user).orElseThrow(() -> new NotFoundException(String.format("Guest Hotel Service with this ID::%s not found", orderServiceId)));
         guestHotelService.setStatus(GuestHotelServiceStatus.CONFIRMED);
         this.guestHotelServiceRepository.save(guestHotelService);
         return new DefaultResponse(
@@ -120,7 +126,7 @@ public class HotelService_Service {
 
     public DefaultResponse cancelOrderService(String orderServiceId, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
-        GuestHotelService guestHotelService = this.guestHotelServiceRepository.findByIdAndUser(orderServiceId, user).orElseThrow(() -> new NotFoundException(String.format("Guest Hotel Service with this ID::%s not found", orderServiceId)));
+        OrderService guestHotelService = this.guestHotelServiceRepository.findByIdAndUser(orderServiceId, user).orElseThrow(() -> new NotFoundException(String.format("Guest Hotel Service with this ID::%s not found", orderServiceId)));
         guestHotelService.setStatus(GuestHotelServiceStatus.CANCELLED);
         this.guestHotelServiceRepository.save(guestHotelService);
         return new DefaultResponse(
@@ -146,11 +152,11 @@ public class HotelService_Service {
         String[] userJoinFields = {"firstName", "lastName", "email"};
         String[] hotelServiceJoinFields = {"name", "serviceCategory"};
 
-        SearchResponse<GuestHotelService> guestOrderServices;
-        guestOrderServices = genericSearch.search(search, GuestHotelService.class, page, limit, guestServiceFields, joinFields, userJoinFields, sortField, sortDirection, null);
+        SearchResponse<OrderService> guestOrderServices;
+        guestOrderServices = genericSearch.search(search, OrderService.class, page, limit, guestServiceFields, joinFields, userJoinFields, sortField, sortDirection, null);
 
         if (guestOrderServices.results().isEmpty()) {
-            guestOrderServices = genericSearch.search(search, GuestHotelService.class, page, limit, guestServiceFields, joinFields, hotelServiceJoinFields, sortField, sortDirection, null);
+            guestOrderServices = genericSearch.search(search, OrderService.class, page, limit, guestServiceFields, joinFields, hotelServiceJoinFields, sortField, sortDirection, null);
         }
 
 
@@ -180,7 +186,7 @@ public class HotelService_Service {
         String[] joinFields = {"user", "hotelService"};
         String[] hotelServiceJoinFields = {"name", "serviceCategory"};
 
-        SearchResponse<GuestHotelService> guestOrderServices = genericSearch.search(search, GuestHotelService.class, page, limit, guestServiceFields, joinFields, hotelServiceJoinFields, sortField, sortDirection, userId);
+        SearchResponse<OrderService> guestOrderServices = genericSearch.search(search, OrderService.class, page, limit, guestServiceFields, joinFields, hotelServiceJoinFields, sortField, sortDirection, userId);
 
 
         List<GuestHotelServiceResponse> response = guestOrderServices.results()
@@ -198,5 +204,12 @@ public class HotelService_Service {
                 currentPage < totalPages,
                 response
         );
+    }
+
+    public BaseResponse<GuestHotelServiceResponse> getOrderService(String orderServiceId) {
+        GuestHotelServiceResponse response = this.guestHotelServiceRepository
+                .findById(orderServiceId).map(mapper::toGuestOrderResponse).orElseThrow(() ->
+                new NotFoundException(String.format("Order Service with ID::%s not found", orderServiceId)));
+        return new BaseResponse<>("Successfully fetched order service", response);
     }
 }

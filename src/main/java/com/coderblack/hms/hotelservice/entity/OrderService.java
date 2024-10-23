@@ -4,10 +4,7 @@ package com.coderblack.hms.hotelservice.entity;
 import com.coderblack.hms.common.contraint.GuestHotelServiceStatus;
 import com.coderblack.hms.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,11 +14,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "guest services")
 @EntityListeners(AuditingEntityListener.class)
-public class GuestHotelService {
+public class OrderService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
