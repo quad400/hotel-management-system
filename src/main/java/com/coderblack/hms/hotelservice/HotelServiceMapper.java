@@ -1,7 +1,6 @@
 package com.coderblack.hms.hotelservice;
 
-import com.coderblack.hms.common.contraint.GuestHotelServiceStatus;
-import com.coderblack.hms.hotelservice.entity.GuestHotelService;
+import com.coderblack.hms.hotelservice.entity.OrderService;
 import com.coderblack.hms.hotelservice.entity.HotelService;
 import com.coderblack.hms.hotelservice.request.AddServiceRequest;
 import com.coderblack.hms.hotelservice.request.OrderServiceRequest;
@@ -24,13 +23,9 @@ public interface HotelServiceMapper {
 
     HotelServiceResponse toResponse(HotelService service);
 
-    @Mapping(target = "id", ignore = true)
-    GuestHotelService toOrderService(OrderServiceRequest request, @MappingTarget User user);
-
     @Mapping(source = "user", target = "user")
     @Mapping(source = "hotelService", target = "hotelService")
-    GuestHotelServiceResponse toGuestOrderResponse(GuestHotelService guestHotelService);
+    GuestHotelServiceResponse toGuestOrderResponse(OrderService guestHotelService);
     UserResponse toUserResponse(User user);
-    HotelServiceResponse toHotelResponse(HotelService hotelService);
 
 }

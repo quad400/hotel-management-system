@@ -1,7 +1,5 @@
-package com.coderblack.hms.hotelservice.entity;
+package com.coderblack.hms.feedback;
 
-
-import com.coderblack.hms.common.contraint.GuestHotelServiceStatus;
 import com.coderblack.hms.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,43 +10,33 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "guest services")
+@NoArgsConstructor
+@Entity(name = "feedbacks")
 @EntityListeners(AuditingEntityListener.class)
-public class GuestHotelService {
-
+public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "service_id", nullable = false)
-    private HotelService hotelService;
-
     @Column(nullable = false)
-    private BigDecimal price;
+    private Float rate;
 
-    @Column(nullable = false)
-    private String details;
+    private String comment;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private GuestHotelServiceStatus status;
-
-    @Column(updatable = false, nullable = false)
-    @CreatedDate()
+    @CreatedDate
+    @Column(updatable = false, insertable = false)
     private LocalDateTime createdAt;
-    @Column(insertable = false)
+
     @LastModifiedDate
+    @Column(updatable = true)
     private LocalDateTime updatedAt;
 }

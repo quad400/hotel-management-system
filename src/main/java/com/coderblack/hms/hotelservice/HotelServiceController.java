@@ -96,7 +96,7 @@ public class HotelServiceController {
         return ResponseEntity.status(HttpStatus.OK).body(this.hotelService.cancelOrderService(orderServiceId, connectedUser));
     }
 
-
+    @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
     @GetMapping("/guest-ordered-services")
     public ResponseEntity<PageResponse<GuestHotelServiceResponse>> getGuestOrderedServices(
             @RequestParam(required = false) String search,
@@ -125,5 +125,12 @@ public class HotelServiceController {
         return ResponseEntity.ok(hotelService.getMyOrderedServices(
                 search, zeroPage, limit, sortField,sortDirection,connectedUser
         ));
+    }
+
+    @GetMapping("/get-order-service/{orderServiceId}")
+    public ResponseEntity<BaseResponse<GuestHotelServiceResponse>> getOrderService(
+            @PathVariable("orderServiceId") String orderServiceId
+    ){
+        return ResponseEntity.ok(hotelService.getOrderService(orderServiceId));
     }
 }

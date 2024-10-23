@@ -1,5 +1,6 @@
 package com.coderblack.hms.room.entity;
 
+import com.coderblack.hms.hotelservice.entity.HotelService;
 import com.coderblack.hms.room.enums.RoomStatus;
 import com.coderblack.hms.room.enums.RoomType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,6 +57,4 @@ public class Room {
     @JsonIgnore
     private List<Reservation> reservations;
 
-    @OneToMany(mappedBy = "room")
-    private List<HotelService> roomMaintenances;
 }
