@@ -8,6 +8,6 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
 #WORKDIR /app
-COPY --from=build /app/target/bns-0.0.1-SNAPSHOT.jar bns.jar
+COPY --from=build /target/bns-0.0.1-SNAPSHOT.jar bns.jar
 EXPOSE 8000
 ENTRYPOINT ["java", "-jar", "bns.jar"]
