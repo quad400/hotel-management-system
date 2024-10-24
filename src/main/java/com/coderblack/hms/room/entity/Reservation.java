@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,10 +29,10 @@ public class Reservation {
     private Room room;
 
     @Column(nullable = false)
-    private LocalDate checkInDate;
+    private LocalDateTime checkInDate;
 
     @Column(nullable = false)
-    private LocalDate checkOutDate;
+    private LocalDateTime checkOutDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

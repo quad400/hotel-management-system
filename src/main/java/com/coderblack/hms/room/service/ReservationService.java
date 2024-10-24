@@ -24,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -157,5 +160,23 @@ public class ReservationService {
                 currentPage < totalPages,
                 response
         );
+    }
+
+    public DefaultResponse checkInReservation(String reservationId, Authentication connectedUser) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException("Reservation not found"));
+        reservation.setCheckInDate(LocalDateTime.now());
+        this.reservationRepository.save(reservation);
+
+        return new DefaultResponse("Successfully checked In", reservationId);
+    }
+
+    public DefaultResponse checkOutReservation(String reservationId, Authentication connectedUser) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException("Reservation not found"));
+        reservation.setCheckOutDate(LocalDateTime.now());
+        this.reservationRepository.save(reservation);
+
+        return new DefaultResponse("Successfully checked Out", reservationId);
     }
 }
