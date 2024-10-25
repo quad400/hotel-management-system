@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.ServletException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,7 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AccountNotFoundException exp){
+    public ResponseEntity<ExceptionResponse> handleException(AccountNotFoundException exp) {
         return ResponseEntity.status(NOT_FOUND).body(
                 ExceptionResponse
                         .builder()
@@ -35,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccountTokenExpireException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AccountTokenExpireException exp){
+    public ResponseEntity<ExceptionResponse> handleException(AccountTokenExpireException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<ExceptionResponse> handleException(InvalidTokenException exp){
+    public ResponseEntity<ExceptionResponse> handleException(InvalidTokenException exp) {
         return ResponseEntity.status(UNAUTHORIZED).body(
                 ExceptionResponse
                         .builder()
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<ExceptionResponse> handleException(ServletException exp){
+    public ResponseEntity<ExceptionResponse> handleException(ServletException exp) {
         return ResponseEntity.status(UNAUTHORIZED).body(
                 ExceptionResponse
                         .builder()
@@ -71,7 +72,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ExceptionResponse> handleException(ConflictException exp){
+    public ResponseEntity<ExceptionResponse> handleException(ConflictException exp) {
         return ResponseEntity.status(CONFLICT).body(
                 ExceptionResponse
                         .builder()
@@ -83,7 +84,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ExceptionResponse> handleException(ExpiredJwtException exp){
+    public ResponseEntity<ExceptionResponse> handleException(ExpiredJwtException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -95,7 +96,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ExceptionResponse> handleException(UnauthorizedException exp){
+    public ResponseEntity<ExceptionResponse> handleException(UnauthorizedException exp) {
         return ResponseEntity.status(UNAUTHORIZED).body(
                 ExceptionResponse
                         .builder()
@@ -107,7 +108,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AuthorizationDeniedException exp){
+    public ResponseEntity<ExceptionResponse> handleException(AuthorizationDeniedException exp) {
         return ResponseEntity.status(UNAUTHORIZED).body(
                 ExceptionResponse
                         .builder()
@@ -119,7 +120,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<ExceptionResponse> handleException(SignatureException exp){
+    public ResponseEntity<ExceptionResponse> handleException(SignatureException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -131,7 +132,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ExceptionResponse> handleException(BadCredentialsException exp){
+    public ResponseEntity<ExceptionResponse> handleException(BadCredentialsException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -143,7 +144,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccountBlockedException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AccountBlockedException exp){
+    public ResponseEntity<ExceptionResponse> handleException(AccountBlockedException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -155,7 +156,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse> handleException(IllegalArgumentException exp){
+    public ResponseEntity<ExceptionResponse> handleException(IllegalArgumentException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -167,7 +168,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<ExceptionResponse> handleException(NumberFormatException exp){
+    public ResponseEntity<ExceptionResponse> handleException(NumberFormatException exp) {
         return ResponseEntity.status(BAD_REQUEST).body(
                 ExceptionResponse
                         .builder()
@@ -179,7 +180,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleException(NotFoundException exp){
+    public ResponseEntity<ExceptionResponse> handleException(NotFoundException exp) {
         return ResponseEntity.status(NOT_FOUND).body(
                 ExceptionResponse
                         .builder()
@@ -190,8 +191,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionResponse> handleException(HttpMessageNotReadableException exp) {
+        return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(
+                ExceptionResponse
+                        .builder()
+                        .businessErrorCode(UNPROCESSABLE.getBusinessErrorCode())
+                        .businessErrorDescription(UNPROCESSABLE.getBusinessErrorDescription())
+                        .error("Required request body is missing")
+                        .build()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleException(Exception exp){
+    public ResponseEntity<ExceptionResponse> handleException(Exception exp) {
         exp.printStackTrace();
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(
                 ExceptionResponse
@@ -203,12 +216,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponse> handleMethodArgumentValidException(MethodArgumentNotValidException exp){
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentValidException(MethodArgumentNotValidException exp) {
         Set<String> errors = new HashSet<>();
-        exp.getBindingResult().getAllErrors().forEach(error->{
+        exp.getBindingResult().getAllErrors().forEach(error -> {
             var errorMessage = error.getDefaultMessage();
             errors.add(errorMessage);
-            });
+        });
 
         return ResponseEntity.status(UNPROCESSABLE_ENTITY)
                 .body(
