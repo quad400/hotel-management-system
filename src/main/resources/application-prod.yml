@@ -4,7 +4,7 @@ spring:
     thymeleaf:
         check-template-location: false
     datasource:
-        url: postgresql://hotel_management_system_904b_user:vvbFhOyIoBRtcKK3t769JrF8thYZTRB9@dpg-csda98jqf0us73b2dp6g-a/hotel_management_system_904b
+        url: postgresql://hotel_management_system_904b_user:vvbFhOyIoBRtcKK3t769JrF8thYZTRB9@dpg-csda98jqf0us73b2dp6g-a.oregon-postgres.render.com/hotel_management_system_904b
         username: hotel_management_system_904b_user
         password: vvbFhOyIoBRtcKK3t769JrF8thYZTRB9
     jpa:
