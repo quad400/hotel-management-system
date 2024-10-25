@@ -4,17 +4,24 @@ spring:
     thymeleaf:
         check-template-location: false
     datasource:
-        url: postgresql://hotel_management_system_904b_user:vvbFhOyIoBRtcKK3t769JrF8thYZTRB9@dpg-csda98jqf0us73b2dp6g-a.oregon-postgres.render.com/hotel_management_system_904b
+        url: jdbc:postgresql://dpg-csda98jqf0us73b2dp6g-a.oregon-postgres.render.com/hotel_management_system_904b
         username: hotel_management_system_904b_user
         password: vvbFhOyIoBRtcKK3t769JrF8thYZTRB9
+        driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
             ddl-auto: update
+        show-sql: false
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 server:
     port: 8001
     servlet:
         context-path: /api/v1/
+    tomcat:
+        accesslog:
+            enabled: true
 
 application:
     security:
