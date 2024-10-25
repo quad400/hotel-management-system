@@ -1,0 +1,23 @@
+spring:
+    application:
+        name: bns
+    thymeleaf:
+        check-template-location: false
+    datasource:
+        url: jdbc:postgresql://localhost:5432/hotel_management_system
+        username: postgres
+        password: adediji09
+    jpa:
+        hibernate:
+            ddl-auto: update
+
+server:
+    port: 8000
+    servlet:
+        context-path: /api/v1/
+
+application:
+    security:
+        jwt:
+            secret-key: d3ffcbd71addcf431293a511dd158251467304adce59ea13ddfc2c39468016ad
+            expiration: 360000000
