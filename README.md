@@ -1,6 +1,7 @@
 ### **Hotel Management System API**
 
 The Hotel Management System API is designed to streamline and manage various aspects of hotel operations. This API provides endpoints to manage bookings, guests, rooms, services, and staff, allowing seamless integration for front-end applications or external systems.
+[![View in Postman](https://assets.getpostman.com/common-share/postman-logo-horizontal-white.svg)](https://documenter.getpostman.com/view/34498096/2sAY4uBhp4)
 
 **Core Features:**
 
